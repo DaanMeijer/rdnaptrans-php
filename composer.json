@@ -1,0 +1,17 @@
+{
+    "name": "studioseptember/rdnaptrans-php",
+    "type": "library",
+    "description": "A port of rdnaptrans-javascript by PDOK",
+    "authors": [
+        {
+            "name": "Daan Meijer",
+            "email": "daan@studioseptember.nl"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+          "StudioSeptember\\RDNAPTrans\\": "src/"
+        }
+    }
+}
