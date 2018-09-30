@@ -4,8 +4,45 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "b563afee7c8ea5c51ae625ff80b129a7",
-    "packages": [],
+    "content-hash": "3c9a37883a2e4da312880b5f7ca37d9b",
+    "packages": [
+        {
+            "name": "google/flatbuffers",
+            "version": "v1.9.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/google/flatbuffers.git",
+                "reference": "20a400e940634108bad812f571582eeffc728eac"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/google/flatbuffers/zipball/20a400e940634108bad812f571582eeffc728eac",
+                "reference": "20a400e940634108bad812f571582eeffc728eac",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Google\\FlatBuffers\\": "php"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "FlatBuffers for PHP",
+            "homepage": "https://github.com/google/flatbuffers",
+            "keywords": [
+                "flatbuffers",
+                "google",
+                "serialization"
+            ],
+            "time": "2018-04-05T22:11:52+00:00"
+        }
+    ],
     "packages-dev": [
         {
             "name": "phpunit/php-code-coverage",

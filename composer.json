@@ -1,20 +1,27 @@
 {
-    "name": "studioseptember/rdnaptrans-php",
-    "type": "library",
-    "description": "A port of rdnaptrans-javascript by PDOK",
-    "authors": [
-        {
-            "name": "Daan Meijer",
-            "email": "daan@studioseptember.nl"
-        }
-    ],
-    "require": {},
-    "require-dev": {
-        "phpunit/phpunit": "^3.7.14"
-    },
-    "autoload": {
-        "psr-4": {
-          "StudioSeptember\\RDNAPTrans\\": "src/"
-        }
+  "name": "studioseptember/rdnaptrans-php",
+  "type": "library",
+  "description": "A port of rdnaptrans-javascript by PDOK",
+  "authors": [
+    {
+      "name": "Daan Meijer",
+      "email": "daan@studioseptember.nl"
     }
+  ],
+  "require": {
+    "google/flatbuffers": "^1.9"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^3.7.14"
+  },
+  "autoload": {
+    "psr-4": {
+      "StudioSeptember\\RDNAPTrans\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "StudioSeptember\\RDNAPTrans\\Tests\\": "tests/"
+    }
+  }
 }

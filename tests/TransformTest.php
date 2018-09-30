@@ -5,54 +5,85 @@
  * Date: 9/29/18
  * Time: 8:18 PM
  */
+namespace StudioSeptember\RDNAPTrans\Tests;
 
 use StudioSeptember\RDNAPTrans\Transform;
 use StudioSeptember\RDNAPTrans\Cartesian;
+use StudioSeptember\RDNAPTrans\Geographic;
 
-class TransformTest extends PHPUnit_Framework_TestCase
+class TransformTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testRd2etrs()
     {
 
-    }
+        foreach (self::POINTS as $point) {
+            $cartesian = new Cartesian($point['x'], $point['y'], $point['NAP']);
+            $result = Transform::rd2etrs($cartesian);
 
-    public function testEtrs2nap()
-    {
-
+            $this->assertLessThan(0.001, abs($result->phi - $point['lat']));
+            $this->assertLessThan(0.001, abs($result->lambda - $point['long']));
+            $this->assertEquals($point['NAP'], $result->h);
+        }
     }
 
     public function testNap2etrs()
     {
-
-    }
-
-    public function testEtrs2rdnap()
-    {
-
-    }
-
-    public function testEtrs2rd()
-    {
-
+        foreach (self::POINTS as $point) {
+            $result = Transform::nap2etrs($point['lat'], $point['long'], $point['NAP']);
+            $this->assertLessThan(0.001, abs($result - $point['h']));
+        }
     }
 
     public function testRdnap2etrs()
     {
-
-        foreach(self::POINTS as $point){
+        foreach (self::POINTS as $point) {
             $cartesian = new Cartesian($point['x'], $point['y'], $point['NAP']);
             $result = Transform::rdnap2etrs($cartesian);
 
-            $diff = 0;
-            $diff += abs($result->phi - $point['lat']);
-            $diff += abs($result->lambda - $point['long']);
-            $diff += abs($result->h - $point['h']);
+            $this->assertLessThan(0.001, abs($result->phi - $point['lat']));
+            $this->assertLessThan(0.001, abs($result->lambda - $point['long']));
+            $this->assertLessThan(0.001, abs($result->h - $point['h']));
+        }
+    }
 
-            var_dump($result, $point);
 
-            $this->assertLessThan(0.001, $diff);
 
+
+    public function testEtrs2rd()
+    {
+        foreach (self::POINTS as $point) {
+
+            $geographic = new Geographic($point['lat'], $point['long'], $point['h']);
+            $result = Transform::etrs2rd($geographic);
+
+            $this->assertLessThan(0.001, abs($result->X - $point['x']));
+            $this->assertLessThan(0.001, abs($result->Y - $point['y']));
+            $this->assertEquals($point['h'], $result->Z);
+        }
+    }
+
+    public function testEtrs2nap()
+    {
+        foreach (self::POINTS as $point) {
+
+            $geographic = new Geographic($point['lat'], $point['long'], $point['h']);
+            $result = Transform::etrs2nap($geographic);
+
+            $this->assertLessThan(0.001, abs($result - $point['NAP']));
+        }
+    }
+
+    public function testEtrs2rdnap()
+    {
+        foreach (self::POINTS as $point) {
+
+            $geographic = new Geographic($point['lat'], $point['long'], $point['h']);
+            $result = Transform::etrs2rdnap($geographic);
+
+            $this->assertLessThan(0.001, abs($result->X - $point['x']));
+            $this->assertLessThan(0.001, abs($result->Y - $point['y']));
+            $this->assertLessThan(0.001, abs($result->Z - $point['NAP']));
         }
     }
 

@@ -9,12 +9,17 @@
 namespace StudioSeptember\RDNAPTrans;
 
 
+use Google\FlatBuffers\ByteBuffer;
 use \RuntimeException;
 
 class Reader
 {
     public static $gridFiles = [];
 
+    /**
+     * @param string $grdFile
+     * @return ByteBuffer
+     */
     public static function read($grdFile)
     {
         $buffer = @static::$gridFiles[$grdFile];
@@ -24,20 +29,10 @@ class Reader
         return $buffer;
     }
 
-    public static function readShort($handle, $offset) {
-        fseek($handle, $offset);
-        return @unpack('v', fread($handle, 2))[0];
-    }
-
-    public static function readDouble($handle, $offset) {
-        fseek($handle, $offset);
-        return @unpack('d', fread($handle, 8))[0];
-    }
-
 }
 
 Reader::$gridFiles = [
-    'x2c.grd' => fopen(__DIR__ . '/../var/x2c.grd', 'r'),
-    'y2c.grd' => fopen(__DIR__ . '/../var/y2c.grd', 'r'),
-    'nlgeo04.grd' => fopen(__DIR__ . '/../var/nlgeo04.grd', 'r'),
+    'x2c.grd' => ByteBuffer::wrap(file_get_contents(__DIR__ . '/../var/x2c.grd', 'r')),
+    'y2c.grd' => ByteBuffer::wrap(file_get_contents(__DIR__ . '/../var/y2c.grd', 'r')),
+    'nlgeo04.grd' => ByteBuffer::wrap(file_get_contents(__DIR__ . '/../var/nlgeo04.grd', 'r')),
 ];

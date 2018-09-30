@@ -9,6 +9,8 @@
 namespace StudioSeptember\RDNAPTrans;
 
 
+use Google\FlatBuffers\ByteBuffer;
+
 class GrdFile
 {
 
@@ -40,7 +42,7 @@ class GrdFile
      */
     private $header = [];
 
-    /** @var resource */
+    /** @var ByteBuffer */
     private $grdInner;
 
     /** Constant <code>GRID_FILE_DX</code> */
@@ -77,11 +79,11 @@ class GrdFile
         $cursor = 0;
 
         $data = Reader::read($grdFileName);
-        if (!$data) throw new \RuntimeException("Unable to read empty source ${grdFileName}");
+        if (!$data) {
+            throw new \RuntimeException("Unable to read empty source ${grdFileName}");
+        }
 
-        fseek($data, $cursor);
-        // Read file id
-        $idString = fread($data, 4);
+        $idString = substr($data->_buffer, $cursor, 4);
         $cursor += 4;
 
         /**
@@ -91,12 +93,12 @@ class GrdFile
          */
 
         if ($idString !== 'DSBB') {
-            throw new \RuntimeException("${grdFileName} is not a valid grd file.
-      \n Expected first four chars of file to be 'DSBB', but found ${idString}");
+            throw new \RuntimeException("${grdFileName} is not a valid grd file. Expected first four chars of file to be 'DSBB', but found ${idString}");
         }
 
         $this->grdInner = $data;
         $this->header = GrdFile::readGrdFileHeader($data, $cursor);
+
         $this->header += [
             'stepSizeX' => ($this->header['maxX'] - $this->header['minX']) / ($this->header['sizeX'] - 1),
             'stepSizeY' => ($this->header['maxY'] - $this->header['minY']) / ($this->header['sizeY'] - 1)
@@ -311,8 +313,8 @@ class GrdFile
      **    Return value: (besides the standard return values)
      **    none
      **--------------------------------------------------------------
-     * @param $input
-     * @param $cursor
+     * @param ByteBuffer $input
+     * @param int $cursor
      * @return array
      */
     public static function readGrdFileHeader($input, $cursor)
@@ -323,21 +325,21 @@ class GrdFile
          **--------------------------------------------------------------
          */
 
-        $sizeX = Reader::readShort($input, $cursor);
+        $sizeX = $input->getShort($cursor);
         $cursor += 2;
-        $sizeY = Reader::readShort($input, $cursor);
+        $sizeY = $input->getShort($cursor);
         $cursor += 2;
-        $minX = Reader::readDouble($input, $cursor);
+        $minX = $input->getDouble($cursor);
         $cursor += 8;
-        $maxX = Reader::readDouble($input, $cursor);
+        $maxX = $input->getDouble($cursor);
         $cursor += 8;
-        $minY = Reader::readDouble($input, $cursor);
+        $minY = $input->getDouble($cursor);
         $cursor += 8;
-        $maxY = Reader::readDouble($input, $cursor);
+        $maxY = $input->getDouble($cursor);
         $cursor += 8;
-        $minValue = Reader::readDouble($input, $cursor);
+        $minValue = $input->getDouble($cursor);
         $cursor += 8;
-        $maxValue = Reader::readDouble($input, $cursor);
+        $maxValue = $input->getDouble($cursor);
 
         return [
             'sizeX' => $sizeX,
@@ -388,11 +390,8 @@ class GrdFile
          */
 
         $start = $headerLength + $recordNumber * $recordLength;
-        $end = $headerLength + $recordNumber * ($recordLength + 1);
+//        $end = $headerLength + $recordNumber * ($recordLength + 1);
 
-        fseek($this->grdInner, $start);
-        $b = fread($this->grdInner, $end - $start);
-
-        return unpack('g', $b);
+        return $this->grdInner->getFloat($start);
     }
 }
