@@ -5,6 +5,7 @@
  * Date: 9/29/18
  * Time: 8:18 PM
  */
+
 namespace StudioSeptember\RDNAPTrans\Tests;
 
 use StudioSeptember\RDNAPTrans\Transform;
@@ -14,6 +15,11 @@ use StudioSeptember\RDNAPTrans\Geographic;
 class TransformTest extends \PHPUnit_Framework_TestCase
 {
 
+
+    const MAX_DELTA_RD = 0.001;
+    const MAX_DELTA_ANGLE = 0.00000001;
+    const MAX_DELTA_H = 0.001;
+
     public function testRd2etrs()
     {
 
@@ -21,8 +27,8 @@ class TransformTest extends \PHPUnit_Framework_TestCase
             $cartesian = new Cartesian($point['x'], $point['y'], $point['NAP']);
             $result = Transform::rd2etrs($cartesian);
 
-            $this->assertLessThan(0.001, abs($result->phi - $point['lat']));
-            $this->assertLessThan(0.001, abs($result->lambda - $point['long']));
+            $this->assertLessThan(self::MAX_DELTA_ANGLE, abs($result->phi - $point['lat']));
+            $this->assertLessThan(self::MAX_DELTA_ANGLE, abs($result->lambda - $point['long']));
             $this->assertEquals($point['NAP'], $result->h);
         }
     }
@@ -31,7 +37,7 @@ class TransformTest extends \PHPUnit_Framework_TestCase
     {
         foreach (self::POINTS as $point) {
             $result = Transform::nap2etrs($point['lat'], $point['long'], $point['NAP']);
-            $this->assertLessThan(0.001, abs($result - $point['h']));
+            $this->assertLessThan(self::MAX_DELTA_H, abs($result - $point['h']));
         }
     }
 
@@ -41,13 +47,11 @@ class TransformTest extends \PHPUnit_Framework_TestCase
             $cartesian = new Cartesian($point['x'], $point['y'], $point['NAP']);
             $result = Transform::rdnap2etrs($cartesian);
 
-            $this->assertLessThan(0.001, abs($result->phi - $point['lat']));
-            $this->assertLessThan(0.001, abs($result->lambda - $point['long']));
-            $this->assertLessThan(0.001, abs($result->h - $point['h']));
+            $this->assertLessThan(self::MAX_DELTA_ANGLE, abs($result->phi - $point['lat']));
+            $this->assertLessThan(self::MAX_DELTA_ANGLE, abs($result->lambda - $point['long']));
+            $this->assertLessThan(self::MAX_DELTA_H, abs($result->h - $point['h']));
         }
     }
-
-
 
 
     public function testEtrs2rd()
@@ -57,8 +61,8 @@ class TransformTest extends \PHPUnit_Framework_TestCase
             $geographic = new Geographic($point['lat'], $point['long'], $point['h']);
             $result = Transform::etrs2rd($geographic);
 
-            $this->assertLessThan(0.001, abs($result->X - $point['x']));
-            $this->assertLessThan(0.001, abs($result->Y - $point['y']));
+            $this->assertLessThan(self::MAX_DELTA_RD, abs($result->X - $point['x']));
+            $this->assertLessThan(self::MAX_DELTA_RD, abs($result->Y - $point['y']));
             $this->assertEquals($point['h'], $result->Z);
         }
     }
@@ -70,7 +74,7 @@ class TransformTest extends \PHPUnit_Framework_TestCase
             $geographic = new Geographic($point['lat'], $point['long'], $point['h']);
             $result = Transform::etrs2nap($geographic);
 
-            $this->assertLessThan(0.001, abs($result - $point['NAP']));
+            $this->assertLessThan(self::MAX_DELTA_H, abs($result - $point['NAP']));
         }
     }
 
@@ -81,9 +85,9 @@ class TransformTest extends \PHPUnit_Framework_TestCase
             $geographic = new Geographic($point['lat'], $point['long'], $point['h']);
             $result = Transform::etrs2rdnap($geographic);
 
-            $this->assertLessThan(0.001, abs($result->X - $point['x']));
-            $this->assertLessThan(0.001, abs($result->Y - $point['y']));
-            $this->assertLessThan(0.001, abs($result->Z - $point['NAP']));
+            $this->assertLessThan(self::MAX_DELTA_RD, abs($result->X - $point['x']));
+            $this->assertLessThan(self::MAX_DELTA_RD, abs($result->Y - $point['y']));
+            $this->assertLessThan(self::MAX_DELTA_H, abs($result->Z - $point['NAP']));
         }
     }
 
